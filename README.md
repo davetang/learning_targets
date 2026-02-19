@@ -35,7 +35,7 @@ It is probably not worth adopting for short, single-script analyses that run in 
 ### Limitations
 
 - **R only.** The pipeline definition, all targets, and the framework itself must run in R. Non-R steps require workarounds (see [FAQ](#faq)).
-- **Function-oriented by design.** {targets} expects logic to live in functions, not in free-standing scripts or top-level expressions. Adapting an existing script-heavy project takes upfront refactoring.
+- **Each target must be a function call, not inline code.** The `command` of a target must be a call to a named function; you cannot inline a block of R expressions the way you can inline shell commands in a Makefile recipe. In practice this means pulling your analysis code into functions defined in `R/`, but there is no requirement on how much or how little each function does.
 - **Package functions are not tracked.** If a function comes from an installed package rather than your own code, {targets} will not detect when it changes. Updating a package silently invalidates assumptions without invalidating any targets.
 - **Single machine by default.** Parallel execution across a cluster requires additional setup via {crew} and {crew.cluster}.
 - **Persistent state can surprise you.** The `_targets/` cache reflects the last run, not the current state of your code. If you delete or rename a target, its old cached result lingers until you explicitly clean it with `tar_destroy()` or `tar_prune()`.
