@@ -5,6 +5,8 @@ Learning about the [{targets} R package](https://books.ropensci.org/targets/).
 ## Table of contents
 
 - [Introduction](#introduction)
+  - [When to use {targets}](#when-to-use-targets)
+  - [Limitations](#limitations)
 - [Getting started](#getting-started)
 - [FAQ](#faq)
 - [Useful links](#useful-links)
@@ -23,6 +25,20 @@ The key differences from Make:
 - **Parallel execution is built in.** Where Make uses `-j`, {targets} integrates with the [{crew}](https://wlandau.github.io/crew/) package to dispatch targets across local workers or HPC clusters with no changes to the pipeline definition.
 
 The mental model is the same as Make: a directed acyclic graph (DAG) of dependencies, skipping work that is already current. `tar_visnetwork()` renders that graph interactively so you can inspect it before running anything.
+
+### When to use {targets}
+
+{targets} pays off when at least some steps in your pipeline are slow enough that re-running them unnecessarily is painful. A good fit looks like: raw data that rarely changes, a sequence of cleaning, modelling, and reporting steps written as R functions, and a need to be confident that every output is consistent with the current code and data.
+
+It is probably not worth adopting for short, single-script analyses that run in seconds, for exploratory work where the pipeline structure changes constantly, or for projects that are not primarily R.
+
+### Limitations
+
+- **R only.** The pipeline definition, all targets, and the framework itself must run in R. Non-R steps require workarounds (see [FAQ](#faq)).
+- **Function-oriented by design.** {targets} expects logic to live in functions, not in free-standing scripts or top-level expressions. Adapting an existing script-heavy project takes upfront refactoring.
+- **Package functions are not tracked.** If a function comes from an installed package rather than your own code, {targets} will not detect when it changes. Updating a package silently invalidates assumptions without invalidating any targets.
+- **Single machine by default.** Parallel execution across a cluster requires additional setup via {crew} and {crew.cluster}.
+- **Persistent state can surprise you.** The `_targets/` cache reflects the last run, not the current state of your code. If you delete or rename a target, its old cached result lingers until you explicitly clean it with `tar_destroy()` or `tar_prune()`.
 
 ## Getting started
 
