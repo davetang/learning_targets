@@ -8,6 +8,8 @@ Learning about the [{targets} R package](https://books.ropensci.org/targets/).
   - [When to use {targets}](#when-to-use-targets)
   - [Limitations](#limitations)
 - [Getting started](#getting-started)
+  - [Directory structure](#directory-structure)
+  - [Setup](#setup)
 - [FAQ](#faq)
 - [Useful links](#useful-links)
 
@@ -41,6 +43,22 @@ It is probably not worth adopting for short, single-script analyses that run in 
 - **Persistent state can surprise you.** The `_targets/` cache reflects the last run, not the current state of your code. If you delete or rename a target, its old cached result lingers until you explicitly clean it with `tar_destroy()` or `tar_prune()`.
 
 ## Getting started
+
+### Directory structure
+
+{targets} expects a specific layout at the root of your project:
+
+```
+_targets.R        # pipeline definition; must be at the project root
+R/                # your functions; loaded automatically by tar_source()
+_targets/         # cache directory; created by {targets} on first run
+```
+
+`_targets.R` is the entry point - it defines the pipeline using `tar_target()` calls and calls `tar_source()` to load everything in `R/`. You do not create or manage the `_targets/` directory yourself; {targets} owns it.
+
+There are no strict rules about what else goes in the project, but keeping raw data in `data/` and outputs such as reports in a separate directory is a common convention.
+
+### Setup
 
 See [Get started with the {targets} R package in four minutes ](https://github.com/wlandau/targets-four-minutes).
 
