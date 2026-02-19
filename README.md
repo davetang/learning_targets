@@ -2,7 +2,25 @@
 
 Learning about the [{targets} R package](https://books.ropensci.org/targets/).
 
-> Pipeline tools coordinate the pieces of computationally demanding analysis projects. The targets package is a Make-like pipeline tool for statistics and data science in R. The package skips costly runtime for tasks that are already up to date, orchestrates the necessary computation with implicit parallel computing, and abstracts files as R objects. If all the current output matches the current upstream code and data, then the whole pipeline is up to date, and the results are more trustworthy than otherwise.
+## Table of contents
+
+- [Introduction](#introduction)
+- [Getting started](#getting-started)
+
+## Introduction
+
+If you've used Make, you already understand the core idea behind {targets}: declare the relationships between inputs and outputs, and the tool figures out what needs to be rebuilt when something changes. {targets} brings that same dependency-tracking philosophy to R data analysis pipelines.
+
+Where Make operates on files and shell commands, {targets} operates on **R objects and R functions**. Each step in a pipeline (called a *target*) is defined by a name and an R expression. {targets} hashes the results and tracks dependencies between targets automatically, so re-running the pipeline only executes the targets that are out of date. Everything else is loaded from cache, just like Make skips up-to-date build artifacts.
+
+The key differences from Make:
+
+- **No Makefile syntax.** Pipelines are defined in plain R (`_targets.R`) using `tar_target()` calls. Dependencies are inferred from which R objects each function consumes, so there is no need to declare prerequisites manually.
+- **Targets are R objects, not files.** Results are stored and retrieved as serialised R objects. You can track files too (with `format = "file"`), but the default unit of work is an in-memory R value.
+- **Reproducibility is first-class.** {targets} records the state of code *and* data. If an upstream function body changes, all downstream targets are invalidated; Make only does this if you encode those relationships yourself.
+- **Parallel execution is built in.** Where Make uses `-j`, {targets} integrates with the [{crew}](https://wlandau.github.io/crew/) package to dispatch targets across local workers or HPC clusters with no changes to the pipeline definition.
+
+The mental model is the same as Make: a directed acyclic graph (DAG) of dependencies, skipping work that is already current. `tar_visnetwork()` renders that graph interactively so you can inspect it before running anything.
 
 ## Getting started
 
