@@ -7,6 +7,7 @@ Learning about the [{targets} R package](https://books.ropensci.org/targets/).
 - [Introduction](#introduction)
 - [Getting started](#getting-started)
 - [FAQ](#faq)
+- [Useful links](#useful-links)
 
 ## Introduction
 
@@ -187,3 +188,14 @@ tar_option_set(
 ```
 
 {targets} will then distribute independent targets across workers automatically. No changes to individual `tar_target()` calls are needed. For HPC clusters, see the [{crew.cluster}](https://wlandau.github.io/crew.cluster/) package.
+
+## Useful links
+
+- [The {targets} R package user manual](https://books.ropensci.org/targets/) - the authoritative reference, covering everything from basic walkthrough to distributed computing and dynamic branching
+- [Function reference](https://docs.ropensci.org/targets/reference/) - documentation for every function in the package
+- [GitHub repository](https://github.com/ropensci/targets) - source code, issue tracker, and discussion board
+- [Get started in four minutes](https://github.com/wlandau/targets-four-minutes) - the minimal worked example this repo is based on
+- [{tarchetypes}](https://docs.ropensci.org/tarchetypes/) - companion package providing higher-level helpers, including `tar_render()` for R Markdown and `tar_quarto()` for Quarto
+- [{crew}](https://wlandau.github.io/crew/) - parallel worker controller that integrates with {targets}
+- [{crew.cluster}](https://wlandau.github.io/crew.cluster/) - extends {crew} for HPC schedulers such as SGE, SLURM, and PBS
+- [Carpentries workshop: Introduction to {targets}](https://carpentries-incubator.github.io/targets-workshop/) - lesson material aimed at researchers new to pipeline tools
