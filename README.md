@@ -11,6 +11,7 @@ Learning about the [{targets} R package](https://books.ropensci.org/targets/).
   - [Directory structure](#directory-structure)
   - [Setup](#setup)
 - [FAQ](#faq)
+- [Using {renv} with {targets}](#using-renv-with-targets)
 - [Useful links](#useful-links)
 
 ## Introduction
@@ -222,6 +223,43 @@ tar_option_set(
 ```
 
 {targets} will then distribute independent targets across workers automatically. No changes to individual `tar_target()` calls are needed. For HPC clusters, see the [{crew.cluster}](https://wlandau.github.io/crew.cluster/) package.
+
+## Using {renv} with {targets}
+
+{renv} and {targets} solve different reproducibility problems and work well alongside each other. {renv} locks the versions of every R package your project depends on. {targets} tracks whether your pipeline outputs are current with respect to your code and data. Together they cover both "which packages were used" and "which computations were run."
+
+### Setup
+
+Initialize {renv} from your project root (inside the container, with the working directory set to the project):
+
+```r
+renv::init()
+```
+
+{renv} will scan your R scripts - including `_targets.R` and everything in `R/` - and populate `renv.lock` with the packages it finds. Commit `renv.lock` to version control. Collaborators (or a fresh clone) can then restore the exact same package versions with:
+
+```r
+renv::restore()
+```
+
+After that, use {targets} as normal. The two tools operate at different layers and do not interfere.
+
+### Excluding the targets cache from {renv}
+
+{renv} scans project files for `library()` and `require()` calls to detect package usage. The `_targets/` cache directory contains serialised R objects that can confuse this scan. Add it to `.renvignore` so {renv} skips it:
+
+```
+_targets/
+```
+
+### Keeping the lockfile up to date
+
+When you install or update a package, run `renv::snapshot()` to record the change in `renv.lock`. Updating `renv.lock` does not invalidate any targets - {targets} is unaware of package versions. If a package update changes the behaviour of a function you rely on, invalidate the affected targets manually with `tar_invalidate()` and re-run the pipeline.
+
+### Useful links
+
+- [{renv} documentation](https://rstudio.github.io/renv/)
+- [Reproducibility chapter in the {targets} manual](https://books.ropensci.org/targets/reproducibility.html) - covers {renv} integration
 
 ## Useful links
 
